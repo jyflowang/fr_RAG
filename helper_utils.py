@@ -47,9 +47,16 @@ def load_chroma(file_name, collection_name, embedding_function):
     }
     df = pd.DataFrame(data)
     
-    collection = chromadb.Client().create_collection(collection_name)
+    client = chromadb.Client()
+    
+    try:
+        client.delete_collection(name=collection_name)
+    except:
+        pass
+    
+    collection = client.create_collection(collection_name)
     
     for ids, row in df.iterrows():
-        collection.add(ids=[str(ids)], documents=[row["text"]], embeddings=[row["embeddings"]])
+        collection.add(ids=[str(ids)], documents=row["text"], embeddings=row["embeddings"])
     
     return collection
