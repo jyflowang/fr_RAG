@@ -34,6 +34,12 @@ fast_hybrid_query_engine = index.as_query_engine(
     sparse_top_k=5             
 )
 
+def get_raw_response(query: str):
+    """
+    Get the raw response from the fast hybrid query engine
+    """
+    return fast_hybrid_query_engine.query(query)
+
 @tool
 def fast_search_engine(query: str) -> str:
     """
