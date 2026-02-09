@@ -12,7 +12,7 @@ from langchain.tools import tool
 load_dotenv()
 Settings.llm = GoogleGenAI(model="models/gemini-2.5-flash",
                            api_key = os.getenv("GOOGLE_API_KEY"))
-Settings.embed_model = GoogleGenAIEmbedding(model_name="models/text-embedding-004",
+Settings.embed_model = GoogleGenAIEmbedding(model_name="models/gemini-embedding-001",
                                             api_key = os.getenv("GOOGLE_API_KEY"))
 
 BASE_DIR = Path(__file__).resolve().parent.parent 
@@ -53,4 +53,11 @@ def fast_search_engine(query: str) -> str:
     """
     
     response = fast_hybrid_query_engine.query(query)
-    return str(response.response)
+  #  return str(response.response)
+    content = str(response.response).strip()
+
+    if not content or "empty response" in content.lower():
+        # Provide a structured signal that the Oracle can recognize
+        return "ERROR_CODE: DATA_NOT_FOUND. The database search yielded no relevant snippets."
+
+    return content

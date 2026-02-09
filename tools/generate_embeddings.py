@@ -62,7 +62,7 @@ def generate_store_embeddings(doc):
         api_key=os.environ.get("GOOGLE_API_KEY")
     )
 
-    embed_model = GoogleGenAIEmbedding(model_name="models/text-embedding-004")
+    embed_model = GoogleGenAIEmbedding(model_name="models/gemini-embedding-001")
 
     node_parser = MarkdownElementNodeParser(
         llm=llm, 
