@@ -34,49 +34,6 @@ class RAGAgent:
         self.tool_node = ToolNode(self.tools)
         self.memory = InMemorySaver()
         self.graph = self._build_graph()
-             
-    # def agent_func(self, state: AgentState, config: RunnableConfig) -> dict:
-    #     """Processes user queries by synthesizing summary, history, and RAG context."""
-    #     summary = state.get("summary", "")
-    #     messages = state.get("messages", [])
-        
-    #     if not messages:
-    #         return "Hello! How can I assist you today?"
-        
-    #     # 1. System Prompt defines the decision logic
-    #     system_instructions = (
-    #         "You are a smart assistant with access to a RAG search tool.\n"
-    #         "1. First, check the [Conversation Summary] and [Chat History] below.\n"
-    #         "2. If you can answer based on memory, do so immediately.\n"
-    #         "3. If the information is missing, call the 'fast_search_engine'tool.\n"
-    #         "4. If the tool returns no results, state that you cannot find the info.\n\n"
-    #     )
-        
-    #     if summary:
-    #         system_instructions += f"--- [Conversation Summary] ---\n{summary}\n\n"
-
-    #     # 2. Prepend the instructions
-    #     full_messages = [SystemMessage(content=system_instructions)] + messages
-
-    #     # 3. Invoke the ReAct agent
-    #     # The agent will decide to either: 
-    #     # a) Return a string (Answer) 
-    #     # b) Return a tool_call (Retrieve from RAG)
-    #     result = self.agent.invoke({"messages": full_messages})
-
-    #     return {"messages": result["messages"]}
-    
-    # def _build_graph(self):
-    #     """Builds the state graph for the agent."""
-        
-    #     graph = StateGraph(AgentState)
-        
-    #     graph.add_node("manage_memory", self.manage_memory_func)
-    #     graph.add_node("search", self.agent_func)
-    #     graph.add_edge(START, "manage_memory")
-    #     graph.add_edge("manage_memory", "search")
-    #     graph.add_edge("search", END)
-    #     return graph.compile(checkpointer=self.checkpointer)
     
     # ---  Node: mem manager ---
     def manage_memory_func(self, state: AgentState) -> AgentState:
@@ -182,17 +139,4 @@ class RAGAgent:
 
 my_agent = RAGAgent()
 
-# if __name__ == "__main__":
-#     bot = RAGAgent()
-    
-#     # 第一次对话
-#     print("--- Round 1 ---")
-#     config = {"configurable": {"thread_id": "1"}}
-#     response = bot.graph.invoke({"messages": [("user", "What is LangGraph?")]}, config)
-#     print(response["messages"][-1].content)
-    
-#     # 第二次对话 (测试记忆)
-#     print("\n--- Round 2 ---")
-#     response = bot.graph.invoke({"messages": [("user", "My name is John.")]}, config)
-#     print(response["messages"][-1].content)
     
