@@ -34,6 +34,22 @@ class RAGAgent:
         self.tool_node = ToolNode(self.tools)
         self.memory = InMemorySaver()
         self.graph = self._build_graph()
+
+    def _message_content_to_text(self, content) -> str:
+        """Normalize message content to plain text for summarization."""
+        if isinstance(content, str):
+            return content
+        if isinstance(content, list):
+            parts = []
+            for item in content:
+                if isinstance(item, dict):
+                    parts.append(str(item.get("text", "")))
+                else:
+                    parts.append(str(item))
+            return "".join(parts)
+        if isinstance(content, dict):
+            return str(content.get("text", ""))
+        return str(content)
     
     # ---  Node: mem manager ---
     def manage_memory_func(self, state: AgentState) -> AgentState:
@@ -53,10 +69,12 @@ class RAGAgent:
             chain = prompt | self.llm
             resp = chain.invoke({
                 "current_summary": summary,
-                "new_lines": "\n".join([msg.content for msg in oldest_messages])
+                "new_lines": "\n".join(
+                    self._message_content_to_text(msg.content) for msg in oldest_messages
+                ),
             })
             
-            new_summary = getattr(resp, "content", str(resp))
+            new_summary = self._message_content_to_text(getattr(resp, "content", resp))
 
             delete_operations = [RemoveMessage(id=m.id) for m in oldest_messages]
             
